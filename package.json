@@ -1,0 +1,22 @@
+{
+  "name": "techshop-mern",
+  "version": "1.0.0",
+  "description": "MERN shopping cart app",
+  "main": "server.js",
+  "scripts": {
+    "start": "node backend/server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FulphilledDev/techshop-mern.git"
+  },
+  "author": "Philip Simpson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FulphilledDev/techshop-mern/issues"
+  },
+  "homepage": "https://github.com/FulphilledDev/techshop-mern#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
