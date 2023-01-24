@@ -1,14 +1,30 @@
+import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap'
 import Rating from '../components/Rating'
-import products from '../products'
+import axios from 'axios'
+// import products from '../products'
 
 const ProductScreen = () => {
-    const params = useParams()
-    // NOTE: We could destructure "match" in order to grab the productId in the browser
-    // INSTEAD: We import useParams and give it a variable of params so we can identify which product we are seeing on the productScreen
-    const product = products.find(p => p._id === params.id )
+    // // NOTE: We could destructure "match" in order to grab the productId in the browser
+    // // INSTEAD: We import useParams and give it a variable of params so we can identify which product we are seeing on the productScreen
+    // const params = useParams()
+    // const product = products.find(p => p._id === params.id )
 
+    // ALSO: We only need the above request when making a frontend request. It does not require backend.
+    const [ product, setProduct ] = useState({})
+
+    const params = useParams()
+
+    useEffect(() => {
+    const fetchProduct = async () => {
+      const { data }= await axios.get(`/products/${params.id}`)
+
+      setProduct(data)
+    }
+
+    fetchProduct()
+  }, [params.id])
   return (
     <>
       <Link className='btn btn-light my-3' to='/'>Go Back</Link>
