@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import productService from './productService'
 
 const initialState = {
-    product: {},
+    product: { reviews: [] },
     products: [],
     isError: false,
     isSuccess: false,
@@ -14,6 +14,21 @@ const initialState = {
 export const getProductList = createAsyncThunk('products/getAll', async (_, thunkAPI) => {
     try {
         return await productService.getProductList()
+    } catch (error) {
+        const message = (error.response 
+            && error.response.data 
+            && error.response.data.message) 
+            || error.message
+            || error.toString()
+
+            return thunkAPI.rejectWithValue(message)
+    }
+})
+
+// Get Products
+export const getProductDetails = createAsyncThunk('products/:id', async (id, thunkAPI) => {
+    try {
+        return await productService.getProductDetails(id)
     } catch (error) {
         const message = (error.response 
             && error.response.data 
@@ -45,6 +60,19 @@ export const productSlice = createSlice ({
             })
             // for switch / case: 'rejected' === 'PRODUCT_LIST_FAIL'
             .addCase(getProductList.rejected, (state, action) => {
+                state.isLoading = false
+                state.isError = true
+                state.message = action.payload
+            })
+            .addCase(getProductDetails.pending, (state) => {
+                state.isLoading = true
+            })
+            .addCase(getProductDetails.fulfilled, (state,action) => {
+                state.isLoading = false
+                state.isSuccess = true
+                state.product = action.payload
+            })
+            .addCase(getProductDetails.rejected, (state, action) => {
                 state.isLoading = false
                 state.isError = true
                 state.message = action.payload

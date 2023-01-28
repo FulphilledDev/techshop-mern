@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import { Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap'
 import Rating from '../components/Rating'
-import axios from 'axios'
+import Loader from '../components/Loader'
+import Message from '../components/Message'
+import { getProductDetails } from '../features/products/productSlice'
 // import products from '../products'
 
 const ProductScreen = () => {
@@ -12,23 +15,23 @@ const ProductScreen = () => {
     // const product = products.find(p => p._id === params.id )
 
     // ALSO: We only need the above request when making a frontend request. It does not require backend.
-    const [ product, setProduct ] = useState({})
+    // const [ product, setProduct ] = useState({})
 
+    const dispatch = useDispatch()
     const params = useParams()
 
     useEffect(() => {
-        const fetchProduct = async () => {
-        const { data }= await axios.get(`/products/${params.id}`)
+        dispatch(getProductDetails(params.id))
+    }, [dispatch, params])
 
-        setProduct(data)
-        }
+    const productDetails = useSelector((state) => state.productList)
+    const { isLoading, isError, message, product } = productDetails
 
-        fetchProduct()
-    }, [params])
   return (
     <>
       <Link className='btn btn-light my-3' to='/'>Go Back</Link>
-      <Row>
+      {isLoading ? <Loader /> : isError ? <Message variant='danger'>{message}</Message> : (
+        <Row>
         <Col md={6}>
             <Image src={product.image} alt={product.name} fluid/>
         </Col>
@@ -80,6 +83,8 @@ const ProductScreen = () => {
             </Card>
         </Col>
       </Row>
+      )}
+      
     </>
   )
 }

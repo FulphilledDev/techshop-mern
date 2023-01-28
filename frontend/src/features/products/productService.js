@@ -9,8 +9,16 @@ const getProductList = async () => {
     return response.data
 }
 
+// Get Landing Products (Public)
+const getProductDetails = async (id) => {
+    const response = await axios.get(`${API_URL}/${id}`)
+
+    return response.data
+}
+
 const productService = {
-    getProductList
+    getProductList,
+    getProductDetails
 }
 
 export default productService
