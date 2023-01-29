@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-const API_URL = '/cart'
-
 // Add Cart Item (Public)
 const addItemToCart = async (qty, id) => {
     // January 29: Trying to add item to cart 
