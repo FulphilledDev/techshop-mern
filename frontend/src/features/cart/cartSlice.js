@@ -11,26 +11,9 @@ const initialState = {
 }
 
 // Add Cart Item
-export const addCartItem = createAsyncThunk('cart/addItem', async (state = { cartItems: [] }, action, thunkAPI)=> {
+export const addCartItem = createAsyncThunk('cart/addItem', async (qty, id, thunkAPI)=> {
     try {
-        const item = action.payload
-        
-        const existItem = state.cartItems.find(x => x.product === item.product)
-
-        if(existItem) {
-            return {
-                ...state,
-                cartItems: state.cartItems.map(x => x.product === existItem.product ? item : x)
-            }
-        } else {
-            return {
-                ...state,
-                cartItems: [...state.cartItems, item]
-            }
-        }
-
-        return await cartService.addItemToCart(item)
-
+        return await cartService.addItemToCart(qty, id)
     } catch (error) {
         const message = (error.response 
             && error.response.data 

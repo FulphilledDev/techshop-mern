@@ -17,7 +17,7 @@ const ProductScreen = () => {
     // ALSO: We only need the above request when making a frontend request. It does not require backend.
     // const [ product, setProduct ] = useState({})
 
-    const [ qty, setQty ] = useState(0)
+    const [ qty, setQty ] = useState(1)
 
     const dispatch = useDispatch()
     const params = useParams()
