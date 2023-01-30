@@ -5,12 +5,24 @@ const API_URL = '/users'
 
 //  Register User
 const register = async (userData) => {
-    const response = await axios.post(API_URL, userData)
-
-    if(response.data) {
-        localStorage.setItem('user', JSON.stringify(response.data))
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
     }
-    return response.data
+    
+    const registeredUser = {
+        name: userData.name,
+        email: userData.email,
+        password: userData.password
+    }
+
+    const { data } = await axios.post(API_URL, registeredUser, config)
+
+    if(data) {
+        localStorage.setItem('user', JSON.stringify(data))
+    }
+    return data
 }
 
 //  Login User
