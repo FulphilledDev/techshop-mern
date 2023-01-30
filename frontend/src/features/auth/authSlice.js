@@ -6,6 +6,7 @@ const user = JSON.parse(localStorage.getItem('user'))
 
 const initialState = {
     user: user ? user : null,
+    userDetails: {},
     isError: false,
     isSuccess: false,
     isLoading: false,
@@ -31,6 +32,22 @@ export const register = createAsyncThunk('auth/register', async (userData, thunk
 export const login = createAsyncThunk('auth/login', async (userData, thunkAPI) => {
     try {
         return await authService.login(userData)
+    } catch (error) {
+        const message = (error.response 
+            && error.response.data 
+            && error.response.data.message) 
+            || error.message
+            || error.toString()
+
+            return thunkAPI.rejectWithValue(message)
+    }
+})
+
+// Get User Details
+export const getUserDetails = createAsyncThunk('auth/user', async (id, thunkAPI) => {
+    try {
+        const token = thunkAPI.getState().auth.user.token
+        return await authService.getUserDetails(id, token)
     } catch (error) {
         const message = (error.response 
             && error.response.data 
@@ -74,6 +91,20 @@ export const authSlice = createSlice ({
                 state.message = action.payload
                 state.user = null
             })
+            .addCase(getUserDetails.pending, (state) => {
+                state.isLoading = true
+            })
+            .addCase(getUserDetails.fulfilled, (state, action) => {
+                state.isLoading = false
+                state.isSuccess = true
+                state.userDetails = action.payload
+            })
+            .addCase(getUserDetails.rejected, (state, action) => {
+                state.isLoading = false
+                state.isError = true
+                state.message = action.payload
+                // state.user = null
+            })
             .addCase(login.pending, (state) => {
                 // ^^^ These are called CONSTANTS: 'pending, fulfilled, rejected'
                 state.isLoading = true
@@ -92,6 +123,7 @@ export const authSlice = createSlice ({
             })
             .addCase(logout.fulfilled, (state) => {
                 state.user = null
+                state.userDetails = {}
             })
         }
 })

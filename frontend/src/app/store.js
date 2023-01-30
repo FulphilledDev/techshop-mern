@@ -40,11 +40,11 @@ const store = configureStore({
   reducer: {
     auth: authReducer,
     productList: productReducer,
-    cart: cartReducer
+    cart: cartReducer,
   },
   initialState: {
     cart: { cartItems: cartItemsFromStorage },
-    auth: { user: userFromStorage}
+    auth: { user: userFromStorage},
   },
 });
 

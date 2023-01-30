@@ -46,11 +46,26 @@ const login = async (userData) => {
     return data
 }
 
+//  Register User
+const getUserDetails = async (id, token) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    const { data } = await axios.get(`${API_URL}/${id}`, config)
+
+    return data
+}
+
 //  Logout User
 const logout = () => localStorage.removeItem('user')
 
 const authService = {
     register,
+    getUserDetails,
     logout,
     login
 }
