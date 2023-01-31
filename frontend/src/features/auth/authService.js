@@ -100,9 +100,7 @@ const deleteUser = async (id, token) => {
         }
     }
 
-    const { data } = await axios.delete(`${API_URL}/${id}`, config)
-
-    return data
+    await axios.delete(`${API_URL}/${id}`, config)
 }
 
 const authService = {
