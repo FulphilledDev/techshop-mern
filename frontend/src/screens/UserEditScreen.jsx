@@ -1,41 +1,51 @@
 import { useState, useEffect } from 'react'
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Form, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getUserDetails } from '../features/auth/authSlice'
+import { getUserDetails, updateUser, reset } from '../features/auth/authSlice'
 import FormContainer from '../components/FormContainer'
 
-const UserEditScreen = ({ history }) => {
+const UserEditScreen = () => {
+    const selectedUser = useSelector(state => state.auth)
+    const { isLoading, isError, message, userDetails } = selectedUser
+
+    const updatedUser = useSelector(state => state.auth)
+    const { isLoading: loadingUpdate , isError: errorUpdate , message: messageUpdate, isSuccess: successUpdate } = updatedUser
+    
     const [ name, setName ] = useState('')
     const [ email, setEmail ] = useState('')
     const [ isAdmin, setIsAdmin ] = useState(false)
 
-    const location = useLocation()
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const params = useParams()
 
     const userId = params.id
 
-    const selectedUser = useSelector(state => state.auth)
-    const { isLoading, isError, message, userDetails } = selectedUser
+    
 
     useEffect(() => {
-      if(!userDetails.name || userDetails._id !== userId) {
-        dispatch(getUserDetails(userId))
-      } else {
-        setName(userDetails.name)
-        setEmail(userDetails.email)
-        setIsAdmin(userDetails.isAdmin)
-      }
-    }, [userDetails, dispatch, userId])
+        if(!userDetails.name || userDetails._id !== userId) {
+            dispatch(getUserDetails(userId))
+        } else {
+            setName(userDetails.name)
+            setEmail(userDetails.email)
+            setIsAdmin(userDetails.isAdmin)
+        }  
+    }, [userDetails, dispatch, navigate, userId, successUpdate])
 
     const submitHandler = (e) => {
         e.preventDefault()
 
-        
+        dispatch(updateUser({ id: userId, name, email, isAdmin }))
+
+        if(successUpdate){
+            dispatch(reset())
+            navigate('/admin/userlist')
+            // ^^^ This continues to get triggered and create a never ending loop... specifically 'reset'. Navigate, when alone, doesnt allow me to get to the current user onClick edit user
+        }
     }
 
 
@@ -46,6 +56,8 @@ const UserEditScreen = ({ history }) => {
         </Link>
         <FormContainer>
             <h1>Edit User</h1>
+            {loadingUpdate && <Loader />}
+            {errorUpdate && <Message variant='danger'>{messageUpdate}</Message>}
             {isLoading ? <Loader /> : isError ? <Message variant='danger'>{message}</Message> : (
                 <Form onSubmit={submitHandler}>
                     <Form.Group controlId='name'>

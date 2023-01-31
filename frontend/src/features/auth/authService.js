@@ -95,12 +95,25 @@ const getUsersList = async (token) => {
 const deleteUser = async (id, token) => {
     const config = {
         headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`
         }
     }
 
     await axios.delete(`${API_URL}/${id}`, config)
+}
+
+//  Update User
+const updateUser = async (userDetails, token) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    const { data } = await axios.put(`${API_URL}/${userDetails.id}`, userDetails, config)
+
+    return data
 }
 
 const authService = {
@@ -110,7 +123,8 @@ const authService = {
     logout,
     login,
     getUsersList,
-    deleteUser
+    deleteUser,
+    updateUser
 }
 
 export default authService

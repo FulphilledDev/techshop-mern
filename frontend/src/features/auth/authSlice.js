@@ -77,7 +77,7 @@ export const updateUserDetails = createAsyncThunk('auth/user/update', async (use
 })
 
 // Get Users List
-export const getUsersList = createAsyncThunk('auth/users', async (_, thunkAPI) => {
+export const getUsersList = createAsyncThunk('admin/users', async (_, thunkAPI) => {
     try {
         const token = thunkAPI.getState().auth.user.token
         return await authService.getUsersList(token)
@@ -93,10 +93,26 @@ export const getUsersList = createAsyncThunk('auth/users', async (_, thunkAPI) =
 })
 
 // Delete User
-export const deleteUser = createAsyncThunk('auth/user/delete', async (id, thunkAPI) => {
+export const deleteUser = createAsyncThunk('admin/user/delete', async (id, thunkAPI) => {
     try {
         const token = thunkAPI.getState().auth.user.token
         return await authService.deleteUser(id, token)
+    } catch (error) {
+        const message = (error.response 
+            && error.response.data 
+            && error.response.data.message) 
+            || error.message
+            || error.toString()
+
+            return thunkAPI.rejectWithValue(message)
+    }
+})
+
+// Update User
+export const updateUser = createAsyncThunk('admin/user/update', async (userDetails, thunkAPI) => {
+    try {
+        const token = thunkAPI.getState().auth.user.token
+        return await authService.updateUser(userDetails, token)
     } catch (error) {
         const message = (error.response 
             && error.response.data 
@@ -122,7 +138,8 @@ export const authSlice = createSlice ({
             state.isError = false
             state.isSuccess = false
             state.message = ''
-        },
+            state.userDetails = {}
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -211,6 +228,19 @@ export const authSlice = createSlice ({
                 state.isSuccess = true
             })
             .addCase(deleteUser.rejected, (state, action) => {
+                state.isLoading = false
+                state.isError = true
+                state.message = action.payload
+            })
+            .addCase(updateUser.pending, (state) => {
+                state.isLoading = true
+            })
+            .addCase(updateUser.fulfilled, (state, action) => {
+                state.isLoading = false
+                state.isSuccess = true
+                state.userDetails = action.payload
+            })
+            .addCase(updateUser.rejected, (state, action) => {
                 state.isLoading = false
                 state.isError = true
                 state.message = action.payload
