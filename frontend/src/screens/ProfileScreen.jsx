@@ -4,7 +4,7 @@ import { Form, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getUserDetails } from '../features/auth/authSlice'
+import { getUserDetails, updateUserDetails } from '../features/auth/authSlice'
 
 const ProfileScreen = () => {
     const [ name, setName ] = useState('')
@@ -22,7 +22,7 @@ const ProfileScreen = () => {
 
     // This holds the logged in userDetails to be displayed in profile
     const userInfo = useSelector(state => state.auth)
-    const { isLoading, isError, message, userDetails } = userInfo
+    const { isLoading, isSuccess, isError, message, userDetails } = userInfo
 
     useEffect(() => {
         if(!user){
@@ -43,13 +43,15 @@ const ProfileScreen = () => {
         if(password !== confirmPassword){
             setAlertMessage('Passwords do not match')
         } else {
-            // const userData = {
-            //     name,
-            //     email,
-            //     password
-            // }
-            
-            //DISPATCH UPDATE PROFILE
+            const updatedDetails = {
+                id: user._id, 
+                name,
+                email,
+                password
+            }
+
+            dispatch(updateUserDetails(updatedDetails))
+            setAlertMessage('Profile Updated!')
         }
     }
 
@@ -59,6 +61,7 @@ const ProfileScreen = () => {
         <h2>User Profile</h2>
         {alertMessage && <Message variant='danger'>{alertMessage}</Message>}
         {isError && <Message variant='danger'>{message}</Message>}
+        {/* {isSuccess && <Message variant='success'>{message}</Message>} */}
         {isLoading && <Loader />}
         <Form onSubmit={submitHandler}>
             <Form.Group controlId='name'>
