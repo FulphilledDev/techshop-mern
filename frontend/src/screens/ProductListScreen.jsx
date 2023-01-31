@@ -5,7 +5,7 @@ import { Table, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getProductList } from '../features/products/productSlice'
+import { getProductList, deleteProduct } from '../features/products/productSlice'
 
 const ProductListScreen = () => {
     
@@ -15,6 +15,9 @@ const ProductListScreen = () => {
 
     const productList = useSelector(state => state.productList)
     const { isLoading, isError, message, products} = productList
+
+    const productDelete = useSelector(state => state.productList)
+    const { isSuccess: successDelete } = productDelete
 
     const userLogin = useSelector(state => state.auth)
     const { user } = userLogin
@@ -27,11 +30,12 @@ const ProductListScreen = () => {
             navigate('/login')
         }
         
-    }, [dispatch, navigate, user])
+    }, [dispatch, navigate, user, successDelete])
+    // ***NOTE*** ^^^ is not refreshing the productList on successDelete
 
     const deleteHandler = (id) => {
         if(window.confirm('Are you sure?')) {
-            // DELETE PRODUCTS
+            dispatch(deleteProduct(id))
         }
     }
 
