@@ -5,7 +5,7 @@ import { Table, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getProductList, deleteProduct } from '../features/products/productSlice'
+import { getProductList, deleteProduct, createProduct } from '../features/products/productSlice'
 
 const ProductListScreen = () => {
     
@@ -14,10 +14,13 @@ const ProductListScreen = () => {
     const params = useParams()
 
     const productList = useSelector(state => state.productList)
-    const { isLoading, isError, message, products} = productList
+    const { isLoading, isError, isSuccess, message, products, product} = productList
 
-    const productDelete = useSelector(state => state.productList)
-    const { isSuccess: successDelete } = productDelete
+    // const productDelete = useSelector(state => state.productList)
+    // const { isSuccess: successDelete } = productDelete
+
+    // const productCreate = useSelector(state => state.productList)
+    // const { isSuccess: successCreate, product } = productCreate
 
     const userLogin = useSelector(state => state.auth)
     const { user } = userLogin
@@ -30,7 +33,7 @@ const ProductListScreen = () => {
             navigate('/login')
         }
         
-    }, [dispatch, navigate, user, successDelete])
+    }, [dispatch, navigate, user, isSuccess])
     // ***NOTE*** ^^^ is not refreshing the productList on successDelete
 
     const deleteHandler = (id) => {
@@ -40,7 +43,12 @@ const ProductListScreen = () => {
     }
 
     const createProductHandler = () => {
-        console.log('Created')
+        dispatch(createProduct())
+
+        if(isSuccess){
+            navigate(`/admin/product/${product._id}/edit`)
+            // ^^^ navigating to newly created product id (at last index of productList)
+        }
     }
 
   return (

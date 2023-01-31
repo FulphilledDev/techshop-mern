@@ -2,20 +2,21 @@ import axios from 'axios';
 
 const API_URL = '/products'
 
-// Get Landing Products (Public)
+// Get Products (Public)
 const getProductList = async () => {
     const response = await axios.get(API_URL)
 
     return response.data
 }
 
-// Get Landing Products (Public)
+// Get Product Details (Public)
 const getProductDetails = async (id) => {
     const response = await axios.get(`${API_URL}/${id}`)
 
     return response.data
 }
 
+// Delete Product By Id
 const deleteProduct = async (id, token) => {
     const config = {
         headers: {
@@ -27,10 +28,25 @@ const deleteProduct = async (id, token) => {
     await axios.delete(`/products/${id}`, config)
 }
 
+// Create Product
+const createProduct = async (token) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    const { data } = await axios.post("/products", {}, config)
+
+    return data 
+}
+
 const productService = {
     getProductList,
     getProductDetails,
-    deleteProduct
+    deleteProduct,
+    createProduct
 }
 
 export default productService
