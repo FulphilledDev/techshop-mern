@@ -105,7 +105,7 @@ export const authSlice = createSlice ({
             state.isError = false
             state.isSuccess = false
             state.message = ''
-        }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -170,6 +170,7 @@ export const authSlice = createSlice ({
             .addCase(logout.fulfilled, (state) => {
                 state.user = null
                 state.userDetails = {}
+                state.users = []
             })
             .addCase(getUsersList.pending, (state) => {
                 state.isLoading = true

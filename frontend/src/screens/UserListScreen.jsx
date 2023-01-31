@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { LinkContainer } from 'react-router-bootstrap'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Table, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
@@ -10,13 +10,22 @@ import { getUsersList } from '../features/auth/authSlice'
 const UserListScreen = () => {
     
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const userList = useSelector(state => state.auth)
     const { isLoading, isError, message, users} = userList
 
+    const userLogin = useSelector(state => state.auth)
+    const { user } = userLogin
+
     useEffect(() => {
-        dispatch(getUsersList())
-    }, [dispatch])
+        if(user && user.isAdmin) {
+            dispatch(getUsersList())
+        } else {
+            navigate('/login')
+        }
+        
+    }, [dispatch, navigate])
 
     const deleteHandler = (id) => {
         console.log('Deleted')
