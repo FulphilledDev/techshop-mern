@@ -77,12 +77,27 @@ const updateUserDetails = async (userData, token) => {
 //  Logout User
 const logout = () => localStorage.removeItem('user')
 
+//  Get Users List
+const getUsersList = async (token) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    const { data } = await axios.get(`${API_URL}`, config)
+
+    return data
+}
+
 const authService = {
     register,
     getUserDetails,
     updateUserDetails,
     logout,
-    login
+    login,
+    getUsersList
 }
 
 export default authService

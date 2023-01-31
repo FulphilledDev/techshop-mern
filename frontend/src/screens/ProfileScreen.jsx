@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Form, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
@@ -22,7 +22,7 @@ const ProfileScreen = () => {
 
     // This holds the logged in userDetails to be displayed in profile
     const userInfo = useSelector(state => state.auth)
-    const { isLoading, isSuccess, isError, message, userDetails } = userInfo
+    const { isLoading, isError, message, userDetails } = userInfo
 
     useEffect(() => {
         if(!user){
