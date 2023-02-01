@@ -33,7 +33,7 @@ const ProductListScreen = () => {
             navigate('/login')
         }
         
-    }, [dispatch, navigate, user, isSuccess])
+    }, [dispatch, navigate, user, product, isSuccess])
     // ***NOTE*** ^^^ is not refreshing the productList on successDelete
 
     const deleteHandler = (id) => {
