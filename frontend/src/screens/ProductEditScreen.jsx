@@ -4,7 +4,7 @@ import { Form, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getProductDetails, reset } from '../features/products/productSlice'
+import { getProductDetails, updateProduct, reset } from '../features/products/productSlice'
 import FormContainer from '../components/FormContainer'
 
 const ProductEditScreen = () => {
@@ -23,10 +23,10 @@ const ProductEditScreen = () => {
     const productId = params.id
 
     const selectedProduct = useSelector(state => state.productList)
-    const { isLoading, isError, message, product } = selectedProduct
+    const { isLoading, isSuccess, isError, message, product } = selectedProduct
 
     useEffect(() => {
-        if(!product.name || product._id !== productId) {
+        if (!product.name || product._id !== productId) {
             dispatch(getProductDetails(productId))
         } else {
             setName(product.name)
@@ -37,17 +37,29 @@ const ProductEditScreen = () => {
             setCountInStock(product.countInStock)
             setImage(product.image)
         }  
-    }, [product, dispatch, navigate, productId])
+        
+    }, [product, dispatch, navigate, productId, isSuccess])
 
     const submitHandler = (e) => {
         e.preventDefault()
 
         // UPDATE PRODUCT
+        dispatch(updateProduct({
+            id: productId,
+            name,
+            price,
+            image,
+            brand,
+            category,
+            countInStock,
+            description
+        }))
 
-        dispatch(reset())
-        navigate('/admin/productlist')
-        // ^^^ This continues to get triggered and create a never ending loop... specifically 'reset'. Navigate, when alone, doesnt allow me to get to the current user onClick edit user
-        
+        if (isSuccess) {
+            dispatch(reset())
+            navigate('/admin/productlist')
+            // ^^^ This continues to get triggered and create a never ending loop... specifically 'reset'. Navigate, when alone, doesnt allow me to get to the current user onClick edit user
+        }
     }
 
 

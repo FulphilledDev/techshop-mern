@@ -5,7 +5,7 @@ import { Table, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getProductList, deleteProduct, createProduct } from '../features/products/productSlice'
+import { getProductList, deleteProduct, createProduct, reset } from '../features/products/productSlice'
 
 const ProductListScreen = () => {
     
@@ -16,18 +16,12 @@ const ProductListScreen = () => {
     const productList = useSelector(state => state.productList)
     const { isLoading, isError, isSuccess, message, products, product} = productList
 
-    // const productDelete = useSelector(state => state.productList)
-    // const { isSuccess: successDelete } = productDelete
-
-    // const productCreate = useSelector(state => state.productList)
-    // const { isSuccess: successCreate, product } = productCreate
-
     const userLogin = useSelector(state => state.auth)
     const { user } = userLogin
 
 
     useEffect(() => {
-        if(user && user.isAdmin) {
+        if (user && user.isAdmin) {
             dispatch(getProductList())
         } else {
             navigate('/login')
@@ -40,12 +34,18 @@ const ProductListScreen = () => {
         if(window.confirm('Are you sure?')) {
             dispatch(deleteProduct(id))
         }
+
+        if (isSuccess) {
+            dispatch(getProductList())
+        }
+        // This currently gets around the productList UI not updating unless refreshing the page
     }
 
     const createProductHandler = () => {
         dispatch(createProduct())
 
-        if(isSuccess){
+        if (isSuccess) {
+            dispatch(reset())
             navigate(`/admin/product/${product._id}/edit`)
             // ^^^ navigating to newly created product id (at last index of productList)
         }
