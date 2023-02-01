@@ -1,3 +1,4 @@
+import path from 'path'
 import express from 'express'
 import dotenv from 'dotenv'
 import colors from 'colors'
@@ -5,6 +6,7 @@ import { notFound, errorHandler } from './middleware/errorMiddleware.js'
 import connectDB from './config/db.js'
 import productRoutes from './routes/productRoutes.js'
 import userRoutes from './routes/userRoutes.js'
+import uploadRoutes from './routes/uploadRoutes.js'
 
 dotenv.config()
 
@@ -20,6 +22,11 @@ app.get('/', (req, res) => {
 
 app.use('/products', productRoutes)
 app.use('/users', userRoutes)
+app.use('/upload', uploadRoutes)
+
+const __dirname = path.resolve()
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
+// ^^^ __dirname is NOT accessible in ES modules, ONLY express syntax (=)
 
 
 app.use(notFound)
